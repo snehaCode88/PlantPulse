@@ -130,13 +130,17 @@ SELECT
     Plant,
     Target_Production,
     Actual_Production
-FROM production;
+FROM production
+LIMIT 10;
 """
 
 production_df = pd.read_sql_query(
     production_query,
     connection
 )
+
+st.write("Production query successful!")
+st.dataframe(production_df)
 
 
 downtime_query = """
