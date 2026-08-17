@@ -91,35 +91,6 @@ energy_csv.to_sql(
 )
 
 connection.commit()
-st.write("DATABASE PATH:", DATABASE_PATH)
-st.write("DATABASE EXISTS:", DATABASE_PATH.exists())
-st.write("DATA DIRECTORY EXISTS:", DATA_DIR.exists())
-
-st.write("Production CSV columns:", production_csv.columns.tolist())
-
-st.write("Production SQL columns:")
-st.dataframe(
-    pd.read_sql_query(
-        "PRAGMA table_info(production)",
-        connection
-    )
-)
-
-st.write("Production table exists:")
-st.write(
-    pd.read_sql_query(
-        "SELECT name FROM sqlite_master WHERE type='table';",
-        connection
-    )
-)
-st.write("Testing production table:")
-
-st.dataframe(
-    pd.read_sql_query(
-        "SELECT * FROM production LIMIT 5;",
-        connection
-    )
-)
 # ============================================================
 # LOAD RAW DATA
 # ============================================================
@@ -130,18 +101,13 @@ SELECT
     Plant,
     Target_Production,
     Actual_Production
-FROM production
-LIMIT 10;
+FROM production;
 """
 
 production_df = pd.read_sql_query(
     production_query,
     connection
 )
-
-st.write("Production query successful!")
-st.dataframe(production_df)
-
 
 downtime_query = """
 SELECT
