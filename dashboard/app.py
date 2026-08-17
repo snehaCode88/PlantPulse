@@ -18,7 +18,53 @@ st.set_page_config(
 # DATABASE CONNECTION
 # ============================================================
 
-connection = sqlite3.connect("data/plantpulse.db")
+import os
+
+database_path = "data/plantpulse.db"
+
+# Create database from CSV files if it does not exist
+if not os.path.exists(database_path):
+
+    connection = sqlite3.connect(database_path)
+
+    production_csv = pd.read_csv("data/production.csv")
+    quality_csv = pd.read_csv("data/quality.csv")
+    downtime_csv = pd.read_csv("data/downtime.csv")
+    energy_csv = pd.read_csv("data/energy.csv")
+
+    production_csv.to_sql(
+        "production",
+        connection,
+        if_exists="replace",
+        index=False
+    )
+
+    quality_csv.to_sql(
+        "quality",
+        connection,
+        if_exists="replace",
+        index=False
+    )
+
+    downtime_csv.to_sql(
+        "downtime",
+        connection,
+        if_exists="replace",
+        index=False
+    )
+
+    energy_csv.to_sql(
+        "energy",
+        connection,
+        if_exists="replace",
+        index=False
+    )
+
+    connection.commit()
+
+else:
+
+    connection = sqlite3.connect(database_path)
 
 # ============================================================
 # LOAD RAW DATA
