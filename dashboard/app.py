@@ -112,6 +112,14 @@ st.write(
         connection
     )
 )
+st.write("Testing production table:")
+
+st.dataframe(
+    pd.read_sql_query(
+        "SELECT * FROM production LIMIT 5;",
+        connection
+    )
+)
 # ============================================================
 # LOAD RAW DATA
 # ============================================================
