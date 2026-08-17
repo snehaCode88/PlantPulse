@@ -2,7 +2,8 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import plotly.graph_objects as go
-import sqlite3
+from pathlib import Path
+
 
 # ============================================================
 # PLANTPULSE DASHBOARD
@@ -14,57 +15,92 @@ st.set_page_config(
     layout="wide"
 )
 
+
+# ============================================================
+# PROJECT PATHS
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATA_DIR = BASE_DIR / "data"
+
+DATABASE_PATH = DATA_DIR / "plantpulse.db"
+
+
 # ============================================================
 # DATABASE CONNECTION
 # ============================================================
 
-import os
+connection = sqlite3.connect(
+    str(DATABASE_PATH),
+    check_same_thread=False
+)
 
-database_path = "data/plantpulse.db"
 
-# Create database from CSV files if it does not exist
-if not os.path.exists(database_path):
+# ============================================================
+# LOAD CSV DATA INTO DATABASE
+# ============================================================
 
-    connection = sqlite3.connect(database_path)
+production_csv = pd.read_csv(
+    DATA_DIR / "production.csv"
+)
 
-    production_csv = pd.read_csv("data/production.csv")
-    quality_csv = pd.read_csv("data/quality.csv")
-    downtime_csv = pd.read_csv("data/downtime.csv")
-    energy_csv = pd.read_csv("data/energy.csv")
+quality_csv = pd.read_csv(
+    DATA_DIR / "quality.csv"
+)
 
-    production_csv.to_sql(
-        "production",
-        connection,
-        if_exists="replace",
-        index=False
-    )
+downtime_csv = pd.read_csv(
+    DATA_DIR / "downtime.csv"
+)
 
-    quality_csv.to_sql(
-        "quality",
-        connection,
-        if_exists="replace",
-        index=False
-    )
+energy_csv = pd.read_csv(
+    DATA_DIR / "energy.csv"
+)
 
-    downtime_csv.to_sql(
-        "downtime",
-        connection,
-        if_exists="replace",
-        index=False
-    )
 
-    energy_csv.to_sql(
-        "energy",
-        connection,
-        if_exists="replace",
-        index=False
-    )
+# ============================================================
+# CREATE / REFRESH DATABASE TABLES
+# ============================================================
 
-    connection.commit()
+production_csv.to_sql(
+    "production",
+    connection,
+    if_exists="replace",
+    index=False
+)
 
-else:
+quality_csv.to_sql(
+    "quality",
+    connection,
+    if_exists="replace",
+    index=False
+)
 
-    connection = sqlite3.connect(database_path)
+downtime_csv.to_sql(
+    "downtime",
+    connection,
+    if_exists="replace",
+    index=False
+)
+
+energy_csv.to_sql(
+    "energy",
+    connection,
+    if_exists="replace",
+    index=False
+)
+
+connection.commit()
+st.write("DATABASE PATH:", DATABASE_PATH)
+st.write("DATABASE EXISTS:", DATABASE_PATH.exists())
+st.write("DATA DIRECTORY EXISTS:", DATA_DIR.exists())
+
+st.write("Production CSV columns:", production_csv.columns.tolist())
+
+st.write(
+    "Production SQL columns:",
+    pd.read_sql_query("PRAGMA table_info(production)", connection)
+)
 
 # ============================================================
 # LOAD RAW DATA
@@ -116,16 +152,17 @@ quality_df = pd.read_sql_query(
     quality_query,
     connection
 )
+
+
 # ============================================================
 # SQL DATABASE CONNECTION
 # ============================================================
 
-SQL_DB_PATH = r"C:\Users\sneha\OneDrive\Desktop\plantpulse\data\plantpulse.db"
+SQL_DB_PATH = DATABASE_PATH
 
-sql_connection = sqlite3.connect(
-    SQL_DB_PATH,
-    check_same_thread=False
-)
+sql_connection = connection
+
+
 # ============================================================
 # SQL QUERY HELPER
 # ============================================================
