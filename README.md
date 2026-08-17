@@ -4,6 +4,10 @@
 
 **PlantPulse** is an interactive operations analytics and decision-support dashboard designed to help manufacturing plants identify production losses, quality problems, equipment downtime, and high-risk machines.
 
+## Dashboard Preview
+
+![PlantPulse Dashboard](assets/dashboard.png) 
+
 The system combines **SQL-based data analysis, Python/Pandas processing, and a Streamlit dashboard** to convert raw plant data into actionable operational insights.
 
 Instead of simply displaying historical data, PlantPulse connects operational metrics to:
