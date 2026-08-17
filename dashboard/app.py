@@ -97,11 +97,21 @@ st.write("DATA DIRECTORY EXISTS:", DATA_DIR.exists())
 
 st.write("Production CSV columns:", production_csv.columns.tolist())
 
-st.write(
-    "Production SQL columns:",
-    pd.read_sql_query("PRAGMA table_info(production)", connection)
+st.write("Production SQL columns:")
+st.dataframe(
+    pd.read_sql_query(
+        "PRAGMA table_info(production)",
+        connection
+    )
 )
 
+st.write("Production table exists:")
+st.write(
+    pd.read_sql_query(
+        "SELECT name FROM sqlite_master WHERE type='table';",
+        connection
+    )
+)
 # ============================================================
 # LOAD RAW DATA
 # ============================================================
